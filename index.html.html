@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexGrowth — AI Automation Agency for USA Small Businesses</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080B10;
+  --bg2: #0D1117;
+  --bg3: #111820;
+  --surface: #141C26;
+  --surface2: #1A2333;
+  --border: rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.12);
+  --accent: #00D4FF;
+  --accent2: #0099CC;
+  --accent3: #00FF9D;
+  --text: #F0F4F8;
+  --text2: #8B9EB0;
+  --text3: #506070;
+  --orange: #FF6B35;
+  --purple: #7B61FF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden;}
+
+/* ── LOADING SCREEN ── */
+#loader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 0.5s ease, visibility 0.5s ease;
+}
+#loader.hide{opacity:0;visibility:hidden;}
+
+.tab-bar{
+  display:flex;align-items:flex-end;gap:0;
+  margin-bottom:0;
+  width:380px;
+}
+.tab{
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  border-bottom:none;
+  border-radius:8px 8px 0 0;
+  padding:10px 18px;
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;
+  color:var(--text2);
+  position:relative;
+  min-width:160px;
+}
+.tab.active{
+  background:var(--bg3);
+  color:var(--text);
+  border-color:var(--border2);
+  z-index:2;
+}
+.tab-favicon{
+  width:14px;height:14px;
+  border:2px solid var(--accent);
+  border-top-color:transparent;
+  border-radius:50%;
+  animation:spin 0.7s linear infinite;
+  flex-shrink:0;
+}
+.tab.active .tab-favicon{
+  border-color:var(--accent);
+  border-top-color:transparent;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.tab-close{margin-left:auto;opacity:0.4;font-size:11px;cursor:pointer;}
+.browser-bar{
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-top:none;
+  border-radius:0 0 0 0;
+  padding:10px 16px;
+  display:flex;align-items:center;gap:10px;
+  width:380px;
+}
+.browser-dot{width:10px;height:10px;border-radius:50%;}
+.browser-url{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;padding:4px 12px;font-size:11px;color:var(--text3);
+  display:flex;align-items:center;gap:6px;
+}
+.url-lock{color:var(--accent3);font-size:10px;}
+.progress-bar-wrap{
+  width:380px;height:2px;background:var(--surface2);
+  overflow:hidden;margin-top:0;
+}
+.progress-bar{
+  height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));
+  width:0%;animation:progress 2s ease forwards;
+}
+@keyframes progress{0%{width:0%}60%{width:70%}100%{width:100%}}
+.loader-brand{
+  margin-top:32px;
+  font-family:'Syne',sans-serif;font-size:22px;font-weight:700;
+  color:var(--text);letter-spacing:-0.5px;
+}
+.loader-brand span{color:var(--accent);}
+.loader-sub{font-size:12px;color:var(--text3);margin-top:6px;letter-spacing:0.5px;}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(8,11,16,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 5%;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.nav-logo{
+  font-family:'Syne',sans-serif;font-size:20px;font-weight:700;
+  color:var(--text);letter-spacing:-0.5px;
+  text-decoration:none;
+}
+.nav-logo span{color:var(--accent);}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{
+  color:var(--text2);text-decoration:none;font-size:14px;font-weight:400;
+  transition:color 0.2s;letter-spacing:0.2px;
+}
+.nav-links a:hover{color:var(--text);}
+.nav-cta{
+  background:var(--accent);color:#000;
+  padding:9px 22px;border-radius:6px;
+  font-size:13px;font-weight:600;text-decoration:none;
+  transition:all 0.2s;letter-spacing:0.3px;
+  font-family:'Syne',sans-serif;
+}
+.nav-cta:hover{background:#00BBEE;transform:translateY(-1px);}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:100px 5% 80px;
+  position:relative;overflow:hidden;
+}
+.hero-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,212,255,0.04) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,black,transparent);
+}
+.hero-glow{
+  position:absolute;top:20%;left:50%;transform:translateX(-50%);
+  width:600px;height:300px;
+  background:radial-gradient(ellipse,rgba(0,212,255,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,212,255,0.08);
+  border:1px solid rgba(0,212,255,0.2);
+  border-radius:100px;padding:6px 16px;
+  font-size:12px;color:var(--accent);
+  letter-spacing:0.8px;text-transform:uppercase;
+  font-weight:500;margin-bottom:28px;
+}
+.badge-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent3);animation:pulse 2s ease infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.3)}}
+h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(38px,6vw,72px);
+  font-weight:800;line-height:1.05;
+  letter-spacing:-2px;
+  max-width:900px;margin:0 auto 24px;
+  color:var(--text);
+}
+h1 .accent{color:var(--accent);}
+h1 .accent2{color:var(--accent3);}
+.hero-sub{
+  font-size:clamp(16px,2vw,20px);color:var(--text2);
+  max-width:560px;margin:0 auto 44px;
+  font-weight:300;line-height:1.7;
+}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{
+  background:var(--accent);color:#000;
+  padding:14px 32px;border-radius:8px;
+  font-size:15px;font-weight:600;text-decoration:none;
+  transition:all 0.2s;font-family:'Syne',sans-serif;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-primary:hover{background:#00BBEE;transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,212,255,0.25);}
+.btn-secondary{
+  background:transparent;color:var(--text);
+  border:1px solid var(--border2);
+  padding:14px 32px;border-radius:8px;
+  font-size:15px;font-weight:500;text-decoration:none;
+  transition:all 0.2s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+.hero-stats{
+  display:flex;gap:48px;justify-content:center;margin-top:72px;
+  flex-wrap:wrap;position:relative;z-index:1;
+}
+.stat-item{text-align:center;}
+.stat-num{
+  font-family:'Syne',sans-serif;font-size:36px;font-weight:800;
+  color:var(--text);letter-spacing:-1px;line-height:1;
+}
+.stat-num span{color:var(--accent);}
+.stat-label{font-size:13px;color:var(--text3);margin-top:4px;letter-spacing:0.3px;}
+
+/* ── SECTION COMMONS ── */
+section{padding:100px 5%;}
+.section-tag{
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin-bottom:12px;
+  display:block;
+}
+.section-title{
+  font-family:'Syne',sans-serif;font-size:clamp(28px,4vw,44px);
+  font-weight:700;letter-spacing:-1px;line-height:1.15;
+  color:var(--text);margin-bottom:16px;
+}
+.section-sub{
+  font-size:17px;color:var(--text2);max-width:520px;
+  font-weight:300;line-height:1.7;margin-bottom:56px;
+}
+.center{text-align:center;}
+.center .section-sub{margin-left:auto;margin-right:auto;}
+
+/* ── SERVICES ── */
+.services-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1px;background:var(--border);
+  border:1px solid var(--border);border-radius:16px;overflow:hidden;
+}
+.service-card{
+  background:var(--bg2);padding:40px 36px;
+  transition:background 0.2s;position:relative;overflow:hidden;
+}
+.service-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:0;transition:opacity 0.3s;
+}
+.service-card:hover{background:var(--surface);}
+.service-card:hover::before{opacity:1;}
+.service-icon{
+  width:48px;height:48px;border-radius:10px;
+  background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:24px;
+}
+.service-title{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:600;
+  color:var(--text);margin-bottom:10px;
+}
+.service-desc{font-size:14px;color:var(--text2);line-height:1.7;margin-bottom:20px;}
+.service-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:100px;padding:3px 10px;font-size:11px;color:var(--text3);
+}
+
+/* ── HOW IT WORKS ── */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px;position:relative;}
+.step-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:32px 28px;position:relative;
+}
+.step-num{
+  font-family:'Syne',sans-serif;font-size:11px;font-weight:700;
+  color:var(--accent);letter-spacing:1px;text-transform:uppercase;
+  margin-bottom:16px;display:block;
+}
+.step-title{
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:600;
+  color:var(--text);margin-bottom:8px;
+}
+.step-desc{font-size:13px;color:var(--text2);line-height:1.7;}
+
+/* ── AUTOMATION SHOWCASE ── */
+.automation-wrap{
+  display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
+}
+.auto-left .section-sub{margin-bottom:32px;}
+.auto-features{display:flex;flex-direction:column;gap:16px;}
+.auto-feat{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:16px;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;transition:border-color 0.2s;
+}
+.auto-feat:hover{border-color:rgba(0,212,255,0.3);}
+.auto-feat-icon{
+  width:36px;height:36px;border-radius:8px;flex-shrink:0;
+  background:rgba(0,212,255,0.08);display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+}
+.auto-feat-text h4{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;}
+.auto-feat-text p{font-size:12px;color:var(--text2);}
+.workflow-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:28px;
+}
+.wf-header{
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+  padding-bottom:16px;border-bottom:1px solid var(--border);
+}
+.wf-dot{width:8px;height:8px;border-radius:50%;}
+.wf-title{font-size:13px;color:var(--text2);}
+.wf-node{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;margin-bottom:8px;
+}
+.wf-node-icon{font-size:14px;width:24px;text-align:center;}
+.wf-node-name{font-size:13px;color:var(--text);font-weight:500;}
+.wf-node-type{font-size:11px;color:var(--text3);margin-left:auto;}
+.wf-arrow{text-align:center;color:var(--text3);font-size:12px;margin:4px 0;}
+.wf-badge{
+  background:rgba(0,255,157,0.08);border:1px solid rgba(0,255,157,0.2);
+  color:var(--accent3);font-size:11px;padding:6px 14px;border-radius:100px;
+  display:inline-flex;align-items:center;gap:6px;margin-top:12px;
+}
+
+/* ── PRICING ── */
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;max-width:960px;margin:0 auto;
+}
+.price-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:16px;padding:36px 32px;position:relative;overflow:hidden;
+  transition:transform 0.2s,border-color 0.2s;
+}
+.price-card:hover{transform:translateY(-4px);}
+.price-card.featured{
+  border-color:var(--accent);
+  background:linear-gradient(135deg,var(--surface) 0%,rgba(0,212,255,0.05) 100%);
+}
+.price-pop{
+  position:absolute;top:20px;right:20px;
+  background:var(--accent);color:#000;
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:4px 10px;border-radius:100px;
+}
+.price-tier{
+  font-size:11px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--text3);font-weight:600;margin-bottom:12px;
+}
+.price-val{
+  font-family:'Syne',sans-serif;font-size:44px;font-weight:800;
+  color:var(--text);letter-spacing:-2px;line-height:1;margin-bottom:6px;
+}
+.price-val span{font-size:18px;font-weight:400;color:var(--text3);letter-spacing:0;}
+.price-desc{font-size:13px;color:var(--text2);margin-bottom:28px;}
+.price-divider{border:none;border-top:1px solid var(--border);margin-bottom:24px;}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px;}
+.price-features li{
+  font-size:13px;color:var(--text2);
+  display:flex;align-items:center;gap:8px;
+}
+.price-features li::before{
+  content:'✓';color:var(--accent3);font-size:12px;font-weight:700;flex-shrink:0;
+}
+.btn-price{
+  display:block;text-align:center;text-decoration:none;
+  padding:12px;border-radius:8px;font-size:14px;font-weight:600;
+  font-family:'Syne',sans-serif;transition:all 0.2s;
+}
+.btn-price-ghost{
+  border:1px solid var(--border2);color:var(--text);
+}
+.btn-price-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn-price-solid{
+  background:var(--accent);color:#000;
+}
+.btn-price-solid:hover{background:#00BBEE;}
+
+/* ── TESTIMONIALS / RESULTS ── */
+.results-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:16px;
+}
+.result-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:28px 24px;
+}
+.result-metric{
+  font-family:'Syne',sans-serif;font-size:36px;font-weight:800;
+  letter-spacing:-1px;margin-bottom:6px;
+}
+.result-label{font-size:13px;color:var(--text2);line-height:1.5;}
+.result-card:nth-child(1) .result-metric{color:var(--accent);}
+.result-card:nth-child(2) .result-metric{color:var(--accent3);}
+.result-card:nth-child(3) .result-metric{color:var(--orange);}
+.result-card:nth-child(4) .result-metric{color:var(--purple);}
+
+/* ── TRUST STRIP ── */
+.trust-strip{
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:28px 5%;display:flex;align-items:center;justify-content:center;
+  gap:40px;flex-wrap:wrap;
+}
+.trust-item{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--text3);
+}
+.trust-item span{font-size:16px;}
+
+/* ── CTA SECTION ── */
+.cta-section{
+  text-align:center;padding:100px 5%;
+  background:linear-gradient(180deg,var(--bg) 0%,var(--bg3) 50%,var(--bg) 100%);
+  position:relative;overflow:hidden;
+}
+.cta-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:700px;height:350px;
+  background:radial-gradient(ellipse,rgba(0,212,255,0.07) 0%,transparent 65%);
+  pointer-events:none;
+}
+.cta-section h2{
+  font-family:'Syne',sans-serif;font-size:clamp(28px,4vw,52px);
+  font-weight:800;letter-spacing:-1.5px;max-width:700px;margin:0 auto 16px;
+  line-height:1.1;
+}
+.cta-btns{display:flex;gap:14px;justify-content:center;margin-top:40px;flex-wrap:wrap;}
+.whatsapp-btn{
+  background:#25D366;color:#000;
+  padding:14px 28px;border-radius:8px;
+  font-size:14px;font-weight:700;text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:all 0.2s;font-family:'Syne',sans-serif;
+}
+.whatsapp-btn:hover{background:#1FBE58;transform:translateY(-2px);}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);
+  padding:48px 5%;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:24px;
+}
+.footer-logo{
+  font-family:'Syne',sans-serif;font-size:18px;font-weight:700;
+  color:var(--text);text-decoration:none;
+}
+.footer-logo span{color:var(--accent);}
+.footer-links{display:flex;gap:28px;}
+.footer-links a{font-size:13px;color:var(--text3);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--text);}
+.footer-copy{font-size:12px;color:var(--text3);}
+
+/* ── HAMBURGER (mobile) ── */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;}
+.hamburger span{width:22px;height:2px;background:var(--text2);border-radius:2px;transition:all 0.3s;}
+
+/* ── SCROLL ANIMATIONS ── */
+.fade-up{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.fade-up.visible{opacity:1;transform:none;}
+
+@media(max-width:900px){
+  .automation-wrap{grid-template-columns:1fr;}
+  .hero-stats{gap:32px;}
+}
+@media(max-width:640px){
+  nav{padding:0 6%;}
+  .nav-links,.nav-cta{display:none;}
+  .hamburger{display:flex;}
+  h1{letter-spacing:-1.5px;}
+  .hero-stats{gap:24px;}
+  .stat-num{font-size:28px;}
+  section{padding:70px 6%;}
+  .tab-bar,.browser-bar,.progress-bar-wrap{width:300px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════ LOADING SCREEN ══════ -->
+<div id="loader">
+  <div class="tab-bar">
+    <div class="tab active">
+      <div class="tab-favicon"></div>
+      <span>NexGrowth</span>
+      <span class="tab-close">✕</span>
+    </div>
+    <div class="tab" style="opacity:0.4;font-size:11px;padding:8px 14px;">
+      + New Tab
+    </div>
+  </div>
+  <div class="browser-bar">
+    <div class="browser-dot" style="background:#FF5F57;"></div>
+    <div class="browser-dot" style="background:#FEBC2E;"></div>
+    <div class="browser-dot" style="background:#28C840;"></div>
+    <div class="browser-url">
+      <span class="url-lock">🔒</span>
+      <span>nexgrowth.agency</span>
+    </div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar"></div>
+  </div>
+  <div class="loader-brand">Nex<span>Growth</span></div>
+  <div class="loader-sub">AI AUTOMATION AGENCY</div>
+</div>
+
+<!-- ══════ NAVIGATION ══════ -->
+<nav>
+  <a href="#" class="nav-logo">Nex<span>Growth</span></a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#automation">Automation</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="https://wa.me/918527904423?text=Hi%20NexGrowth!%20I%27d%20like%20a%20free%20audit." class="nav-cta" target="_blank">Get Free Audit →</a>
+  <div class="hamburger" onclick="document.querySelector('.nav-links').style.display='flex';document.querySelector('.nav-links').style.flexDirection='column';">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ══════ HERO ══════ -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="badge"><div class="badge-dot"></div> AI-Powered Growth for USA Businesses</div>
+  <h1>
+    Turn Your Business Into<br>
+    An <span class="accent">Automated</span><br>
+    <span class="accent2">Revenue Machine</span>
+  </h1>
+  <p class="hero-sub">
+    We build intelligent automation workflows, AI-powered websites, and growth systems that run 24/7 — while you focus on what matters.
+  </p>
+  <div class="hero-btns">
+    <a href="https://wa.me/918527904423?text=Hi%20NexGrowth!%20I%27d%20like%20a%20free%20strategy%20audit%20for%20my%20business." class="btn-primary" target="_blank">
+      💬 Get Free Strategy Audit
+    </a>
+    <a href="#services" class="btn-secondary" onclick="event.preventDefault();document.getElementById('services').scrollIntoView({behavior:'smooth'});">
+      Explore Services →
+    </a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">90<span>%</span></div>
+      <div class="stat-label">Time Saved with Automation</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">3<span>×</span></div>
+      <div class="stat-label">Avg. Lead Response Speed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">$0</div>
+      <div class="stat-label">Setup Risk — Pay After Delivery</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">24<span>/7</span></div>
+      <div class="stat-label">AI Runs While You Sleep</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ TRUST STRIP ══════ -->
+<div class="trust-strip fade-up">
+  <div class="trust-item"><span>⭐</span> 5-Star Fiverr Agency</div>
+  <div class="trust-item"><span>🇺🇸</span> Focused on USA Markets</div>
+  <div class="trust-item"><span>🔒</span> 50% Advance · 50% On Delivery</div>
+  <div class="trust-item"><span>⚡</span> n8n · WordPress · AI Automation</div>
+  <div class="trust-item"><span>📩</span> nexgrowth.business@gmail.com</div>
+</div>
+
+<!-- ══════ SERVICES ══════ -->
+<section id="services">
+  <div class="center fade-up">
+    <span class="section-tag">What We Do</span>
+    <h2 class="section-title">Services Built for Growth</h2>
+    <p class="section-sub">Every service is designed to generate leads, save time, and increase revenue for your business.</p>
+  </div>
+  <div class="services-grid fade-up">
+    <div class="service-card">
+      <div class="service-icon">🤖</div>
+      <div class="service-title">AI Workflow Automation</div>
+      <p class="service-desc">Custom n8n automations that handle email responses, lead routing, CRM updates, and Telegram alerts — all on autopilot.</p>
+      <div class="service-tags">
+        <span class="tag">n8n</span><span class="tag">Groq AI</span><span class="tag">Google Sheets</span><span class="tag">Gmail</span>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">🌐</div>
+      <div class="service-title">WordPress Web Development</div>
+      <p class="service-desc">Fast, conversion-optimized WordPress sites with SEO, mobile-first design, and integrated booking/CRM systems.</p>
+      <div class="service-tags">
+        <span class="tag">WordPress</span><span class="tag">WooCommerce</span><span class="tag">SEO</span><span class="tag">Speed</span>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">📱</div>
+      <div class="service-title">Social Media Management</div>
+      <p class="service-desc">Done-for-you content creation, scheduling, and engagement strategy across Instagram, Facebook, and LinkedIn.</p>
+      <div class="service-tags">
+        <span class="tag">Instagram</span><span class="tag">LinkedIn</span><span class="tag">Content</span><span class="tag">Growth</span>
+      </div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">✍️</div>
+      <div class="service-title">Blog & Content Writing</div>
+      <p class="service-desc">SEO-optimized blog posts, landing page copy, and email sequences that attract, convert, and retain customers.</p>
+      <div class="service-tags">
+        <span class="tag">SEO Blogs</span><span class="tag">Copywriting</span><span class="tag">Email</span><span class="tag">AI-Assisted</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ AUTOMATION SHOWCASE ══════ -->
+<section id="automation" style="background:var(--bg2);">
+  <div class="automation-wrap fade-up">
+    <div class="auto-left">
+      <span class="section-tag">Automation</span>
+      <h2 class="section-title">Your Business Responds in Seconds — Not Hours</h2>
+      <p class="section-sub">Our AI agents handle incoming leads, classify them, send personalized replies, and book meetings — without a single click from you.</p>
+      <div class="auto-features">
+        <div class="auto-feat">
+          <div class="auto-feat-icon">📧</div>
+          <div class="auto-feat-text">
+            <h4>Smart Email Responder</h4>
+            <p>AI reads incoming emails, detects intent, and sends branded HTML replies in under 2 minutes.</p>
+          </div>
+        </div>
+        <div class="auto-feat">
+          <div class="auto-feat-icon">🎯</div>
+          <div class="auto-feat-text">
+            <h4>Lead Qualifier Agent</h4>
+            <p>Automatically scores and routes leads into Premium or Standard tracks with zero manual work.</p>
+          </div>
+        </div>
+        <div class="auto-feat">
+          <div class="auto-feat-icon">📅</div>
+          <div class="auto-feat-text">
+            <h4>Auto Calendar Booking</h4>
+            <p>Hot leads get an automatic Google Calendar meeting invite — you just show up to the call.</p>
+          </div>
+        </div>
+        <div class="auto-feat">
+          <div class="auto-feat-icon">📊</div>
+          <div class="auto-feat-text">
+            <h4>CRM Auto-Logging</h4>
+            <p>Every lead, interaction, and outcome gets logged to Google Sheets automatically.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="workflow-card">
+        <div class="wf-header">
+          <div class="wf-dot" style="background:#FF5F57;"></div>
+          <div class="wf-dot" style="background:#FEBC2E;"></div>
+          <div class="wf-dot" style="background:#28C840;"></div>
+          <span class="wf-title">AI Lead Qualifier — Live Preview</span>
+        </div>
+        <div class="wf-node"><span class="wf-node-icon">🔗</span><span class="wf-node-name">Webhook Trigger</span><span class="wf-node-type">Input</span></div>
+        <div class="wf-arrow">↓</div>
+        <div class="wf-node"><span class="wf-node-icon">✏️</span><span class="wf-node-name">Parse Lead Data</span><span class="wf-node-type">Edit Fields</span></div>
+        <div class="wf-arrow">↓</div>
+        <div class="wf-node" style="border-color:rgba(0,212,255,0.3);"><span class="wf-node-icon">🤖</span><span class="wf-node-name">Groq AI Classifier</span><span class="wf-node-type">HTTP Request</span></div>
+        <div class="wf-arrow">↓</div>
+        <div class="wf-node"><span class="wf-node-icon">⚡</span><span class="wf-node-name">Route: Premium / Standard</span><span class="wf-node-type">Switch</span></div>
+        <div class="wf-arrow">↓</div>
+        <div class="wf-node" style="border-color:rgba(0,255,157,0.3);"><span class="wf-node-icon">📅</span><span class="wf-node-name">Book Calendar + Send Email</span><span class="wf-node-type">Google</span></div>
+        <div class="wf-arrow">↓</div>
+        <div class="wf-node"><span class="wf-node-icon">📊</span><span class="wf-node-name">Log to CRM Sheet</span><span class="wf-node-type">Sheets</span></div>
+        <div class="wf-badge"><span>●</span> Live · Runs 24/7 · ~$0.001/execution</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ HOW IT WORKS ══════ -->
+<section>
+  <div class="center fade-up">
+    <span class="section-tag">Process</span>
+    <h2 class="section-title">From Brief to Live in 5 Days</h2>
+    <p class="section-sub">Simple, transparent process. No jargon. No surprises.</p>
+  </div>
+  <div class="steps fade-up">
+    <div class="step-card">
+      <span class="step-num">Step 01</span>
+      <div class="step-title">Free Discovery Call</div>
+      <p class="step-desc">We analyze your business bottlenecks and identify where automation saves you the most time and money.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-num">Step 02</span>
+      <div class="step-title">Custom Proposal</div>
+      <p class="step-desc">You receive a tailored scope, timeline, and ROI estimate. No generic packages — only what your business actually needs.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-num">Step 03</span>
+      <div class="step-title">Build & Test</div>
+      <p class="step-desc">We build, test, and refine your automation workflows or website. You see a live demo before anything goes live.</p>
+    </div>
+    <div class="step-card">
+      <span class="step-num">Step 04</span>
+      <div class="step-title">Launch & Train</div>
+      <p class="step-desc">We deploy to your systems and walk you through a full Loom video guide so your team can manage it confidently.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ RESULTS ══════ -->
+<section style="background:var(--bg2);">
+  <div class="center fade-up">
+    <span class="section-tag">Results</span>
+    <h2 class="section-title">Real Numbers. Real ROI.</h2>
+    <p class="section-sub">What businesses experience after deploying NexGrowth automation systems.</p>
+  </div>
+  <div class="results-grid fade-up">
+    <div class="result-card">
+      <div class="result-metric">87%</div>
+      <div class="result-label">Reduction in manual email handling time within first 30 days</div>
+    </div>
+    <div class="result-card">
+      <div class="result-metric">3.4×</div>
+      <div class="result-label">Faster lead response time vs businesses without automation</div>
+    </div>
+    <div class="result-card">
+      <div class="result-metric">$0.001</div>
+      <div class="result-label">Cost per AI-processed inquiry with our recommended setup</div>
+    </div>
+    <div class="result-card">
+      <div class="result-metric">99%</div>
+      <div class="result-label">Uptime on all deployed automation workflows via Railway hosting</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ PRICING ══════ -->
+<section id="pricing">
+  <div class="center fade-up">
+    <span class="section-tag">Investment</span>
+    <h2 class="section-title">Pay for Results, Not Hours</h2>
+    <p class="section-sub">Flat-rate packages. You know exactly what you get and what it costs — before we start.</p>
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,157,0.08);border:1px solid rgba(0,255,157,0.2);border-radius:100px;padding:8px 18px;font-size:12px;color:var(--accent3);margin-bottom:16px;">
+      <div class="badge-dot"></div> 🔥 Launch Offer — Save 30% This Month Only
+    </div>
+  </div>
+
+  <div class="pricing-grid fade-up">
+
+    <!-- STARTER -->
+    <div class="price-card">
+      <div class="price-tier">Quick Win</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+        <div class="price-val">$75</div>
+        <div style="font-size:14px;color:var(--text3);text-decoration:line-through;">$120</div>
+      </div>
+      <div style="font-size:11px;color:var(--accent3);font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">⚡ Delivered in 3 Days</div>
+      <p class="price-desc">Your first automation live in 72 hours. Perfect for testing before you scale.</p>
+      <div style="background:rgba(0,212,255,0.05);border-radius:8px;padding:10px 12px;margin-bottom:16px;font-size:12px;color:var(--text2);">
+        💡 Saves ~<strong style="color:var(--text);">6–8 hrs/week</strong> of manual work
+      </div>
+      <hr class="price-divider">
+      <ul class="price-features">
+        <li>1 Custom n8n Workflow</li>
+        <li>Up to 10 Nodes</li>
+        <li>Gmail Auto-Responder OR Lead Form Handler</li>
+        <li>Google Sheets CRM Log</li>
+        <li>Telegram Alert on New Lead</li>
+        <li>Loom Video Walkthrough</li>
+        <li>3 Revisions Included</li>
+      </ul>
+      <a href="https://wa.me/918527904423?text=Hi!%20I%27m%20interested%20in%20the%20Quick%20Win%20package%20(%2475).%20Can%20we%20talk%3F" class="btn-price btn-price-ghost" target="_blank">💬 Chat on WhatsApp →</a>
+    </div>
+
+    <!-- GROWTH (FEATURED) -->
+    <div class="price-card featured">
+      <div class="price-pop">Best Value</div>
+      <div class="price-tier">AI Growth Engine</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+        <div class="price-val">$299</div>
+        <div style="font-size:14px;color:var(--text3);text-decoration:line-through;">$499</div>
+      </div>
+      <div style="font-size:11px;color:var(--accent3);font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">⚡ Delivered in 5 Days</div>
+      <p class="price-desc">Full AI system that qualifies leads, replies instantly, and books meetings — while you sleep.</p>
+      <div style="background:rgba(0,212,255,0.07);border-radius:8px;padding:10px 12px;margin-bottom:16px;font-size:12px;color:var(--text2);">
+        💡 Saves ~<strong style="color:var(--text);">20–30 hrs/week</strong> · ROI in first 7 days
+      </div>
+      <hr class="price-divider">
+      <ul class="price-features">
+        <li>AI Lead Qualifier Agent (22 Nodes)</li>
+        <li>GPT-4o-mini / Groq AI Brain</li>
+        <li>Premium vs Standard Lead Routing</li>
+        <li>Gmail + Follow-Up Email Sequence</li>
+        <li>Google Calendar Auto-Booking</li>
+        <li>Full Google Sheets CRM</li>
+        <li>Telegram Real-Time Alerts</li>
+        <li>Human Approval Gate</li>
+        <li>Error Handling + Auto-Recovery</li>
+        <li>5 Revisions + 14-Day Support</li>
+      </ul>
+      <a href="https://wa.me/918527904423?text=Hi!%20I%27m%20interested%20in%20the%20AI%20Growth%20Engine%20(%24299).%20Can%20we%20discuss%3F" class="btn-price btn-price-solid" target="_blank">💬 Claim This Package →</a>
+      <div style="text-align:center;font-size:11px;color:var(--text3);margin-top:10px;">Only <strong style="color:var(--orange);">3 slots left</strong> at this price</div>
+    </div>
+
+    <!-- ENTERPRISE -->
+    <div class="price-card">
+      <div class="price-tier">Full-Stack System</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px;">
+        <div class="price-val">$599<span style="font-size:16px;font-weight:400;color:var(--text3);">+</span></div>
+      </div>
+      <div style="font-size:11px;color:var(--accent3);font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">⚡ Delivered in 7–10 Days</div>
+      <p class="price-desc">Complete business infrastructure — automation + website + content, all integrated.</p>
+      <div style="background:rgba(123,97,255,0.06);border-radius:8px;padding:10px 12px;margin-bottom:16px;font-size:12px;color:var(--text2);">
+        💡 Replaces a <strong style="color:var(--text);">$2,000+/mo</strong> in-house team
+      </div>
+      <hr class="price-divider">
+      <ul class="price-features">
+        <li>Everything in AI Growth Engine</li>
+        <li>WordPress Website (5 Pages)</li>
+        <li>Email Auto-Responder Workflow</li>
+        <li>Instagram Lead Outreach Bot</li>
+        <li>4 Blog Posts / Month</li>
+        <li>Social Media Calendar Setup</li>
+        <li>Monthly Maintenance Included</li>
+        <li>Dedicated WhatsApp Support</li>
+      </ul>
+      <a href="https://wa.me/918527904423?text=Hi!%20I%27m%20interested%20in%20the%20Full-Stack%20System.%20Can%20you%20send%20a%20custom%20quote%3F" class="btn-price btn-price-ghost" target="_blank">💬 Get Custom Quote →</a>
+    </div>
+
+  </div>
+
+  <!-- Guarantee bar -->
+  <div class="fade-up" style="max-width:700px;margin:40px auto 0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 28px;display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;text-align:center;">
+    <div style="font-size:13px;color:var(--text2);">🛡️ <strong style="color:var(--text);">Satisfaction Guarantee</strong><br><span style="font-size:11px;">Free revisions until you're happy</span></div>
+    <div style="font-size:13px;color:var(--text2);">💳 <strong style="color:var(--text);">50% Upfront · 50% On Delivery</strong><br><span style="font-size:11px;">Zero risk payment structure</span></div>
+    <div style="font-size:13px;color:var(--text2);">📹 <strong style="color:var(--text);">Loom Handoff Video</strong><br><span style="font-size:11px;">Every delivery includes a full walkthrough</span></div>
+  </div>
+</section>
+
+<!-- ══════ CTA ══════ -->
+<section id="contact" class="cta-section">
+  <div class="cta-glow"></div>
+  <span class="section-tag" style="position:relative;z-index:1;">Ready to Grow?</span>
+  <h2 style="position:relative;z-index:1;">
+    Let's Automate Your<br>Business This Week
+  </h2>
+  <p style="font-size:17px;color:var(--text2);max-width:480px;margin:16px auto 0;font-weight:300;position:relative;z-index:1;">
+    Drop us a WhatsApp or Telegram message. We'll analyze your business and show you exactly what's possible — for free.
+  </p>
+  <div class="cta-btns" style="position:relative;z-index:1;">
+    <a href="https://wa.me/918527904423?text=Hi%20NexGrowth!%20I%27d%20like%20to%20get%20started.%20Can%20we%20discuss%20my%20project%3F" class="whatsapp-btn" target="_blank">💬 Chat on WhatsApp</a>
+    <a href="https://t.me/nexgrowth" class="btn-primary" target="_blank">✈️ Message on Telegram</a>
+    <a href="https://www.fiverr.com/nexgrowth" class="btn-secondary" target="_blank">🟢 View Fiverr Gigs</a>
+  </div>
+  <p style="font-size:12px;color:var(--text3);margin-top:24px;position:relative;z-index:1;">
+    nexgrowth.business@gmail.com &nbsp;·&nbsp; USA Small Business Specialists &nbsp;·&nbsp; Response within 12 hrs
+  </p>
+</section>
+
+<!-- ══════ FOOTER ══════ -->
+<footer>
+  <a href="#" class="footer-logo">Nex<span>Growth</span></a>
+  <div class="footer-links">
+    <a href="#services">Services</a>
+    <a href="#automation">Automation</a>
+    <a href="#pricing">Pricing</a>
+    <a href="https://www.fiverr.com/nexgrowth" target="_blank">Fiverr</a>
+  </div>
+  <div class="footer-copy">© 2025 NexGrowth Agency. All rights reserved.</div>
+</footer>
+
+<script>
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    document.getElementById('loader').classList.add('hide');
+  },2400);
+});
+
+const observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(e.isIntersecting){e.target.classList.add('visible');}
+  });
+},{threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(function(el){observer.observe(el);});
+</script>
+</body>
+</html>
